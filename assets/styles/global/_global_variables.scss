@@ -1,0 +1,32 @@
+
+/* Global Variables */
+
+// Options booleans
+$mq-useAdaptive: true !global; // Media Querie mixin will skip if this ain't true
+$debug: false !global; // Show debug features
+
+
+
+
+// Colors
+$color_white: #fff;
+$color_black: #000;
+$color_textblack: #000;
+$color_textwhite: #fff;
+
+$color_purple: #c1007a;
+$color_grey: #c8c8c8;
+
+
+
+
+// Media Queries, Labels and Content widths
+@include newMediaQuerie((name: '930x600', min-width: 930px, contentWidth: 870px));
+
+
+
+
+// Global font type
+$font_basic: "Arial",  Sans-serif;
+$font_nillandRegular: 'nillandregular', $font_basic;
+$font_nillandExtraBold: 'nilland-extraboldregular', $font_basic;

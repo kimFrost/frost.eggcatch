@@ -1,0 +1,105 @@
+
+
+// PARAMETERS
+
+
+// BLOCK
+.splash {
+  @include border-radius(50%);
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: $color_white;
+  border: 1px solid $color_grey;
+  color: $color_white;
+}
+
+.splash,
+.splash__inner,
+.splash__line1,
+.splash__line2 {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+
+//--- ELEMENTS ----------------------------------------------------------//
+
+.splash__inner {
+  @include transform-origin(50%, 50%);
+  @include rotate(-15deg);
+  @include border-radius(50%);
+  display: block;
+  position: absolute;
+  overflow: hidden;
+  background-color: $color_purple;
+  left: 7px;
+  top: 7px;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  text-align: center;
+
+  // Flexbox (begin)
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-box-align: center;
+  -webkit-flex-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  // Flexbox (end)
+}
+
+.splash__line1 {
+  font-size: 16px;
+  line-height: 16px;
+  display: block;
+  width: 100%;
+  font-family: $font_nillandRegular;
+}
+
+.splash__line2 {
+  font-size: 36px;
+  line-height: 36px;
+  letter-spacing: -1px;
+  display: block;
+  width: 100%;
+  font-family: $font_nillandExtraBold;
+}
+
+
+//--- MODIFIERS ----------------------------------------------------------//
+
+
+
+//--- MEDIA QUERRIES ----------------------------------------------------------//
+
+@include mediaQueries('930x600') {
+  .splash__line1 {
+    font-size: 43px;
+    line-height: 43px;
+  }
+
+  .splash__line2 {
+    font-size: 75px;
+    line-height: 75px;
+  }
+
+}
+
+//--- KEYFRAME ANIMATIONS ----------------------------------------------------------//

@@ -1,0 +1,57 @@
+
+
+// PARAMETERS
+
+
+// BLOCK
+.btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 15px;
+  text-align: center;
+  cursor: pointer;
+  font-family: $font_nillandExtraBold;
+  color: $color_white;
+  background-color: $color_purple;
+  text-decoration: none;
+  &:focus,
+  &:hover {
+    background-color: mix($color_purple, $color_white, 70%);
+  }
+  &:active {
+    background-color: mix($color_purple, $color_black, 70%);
+  }
+  & + & {
+    background-color: $color_black;
+    &:focus,
+    &:hover {
+      background-color: mix($color_black, $color_white, 70%);
+    }
+    &:active {
+      background-color: mix($color_black, $color_black, 70%);
+    }
+  }
+}
+
+.btn {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+
+//--- ELEMENTS ----------------------------------------------------------//
+
+
+
+//--- MODIFIERS ----------------------------------------------------------//
+
+
+
+//--- MEDIA QUERRIES ----------------------------------------------------------//
+
+
+
+//--- KEYFRAME ANIMATIONS ----------------------------------------------------------//

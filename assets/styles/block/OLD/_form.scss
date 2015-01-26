@@ -1,0 +1,119 @@
+
+
+$formInputHeight: 36px;
+
+.form {
+	display: block;
+	width: 100%;
+}
+
+.form,
+.form__inputshared,
+.form__input,
+.form__button,
+.form__select,
+.form__option {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.form__inputshared {
+	//@include appearance(none);
+	@include fontSize(gamma, 0);
+	@include border-radius(3px, 3px, 3px, 3px);
+	display: block;
+	padding: 0px 10px;
+	width: 100%;
+	border: 1px solid $color_lightgrey;
+	margin: 0;
+	height: $formInputHeight;
+	line-height: $formInputHeight;
+	outline: none;
+	vertical-align: middle;
+	z-index: 1;
+	&[disabled="disabled"] {
+		opacity: 0.6;
+		cursor: default;
+	}
+	&.ng-dirty {
+		&.ng-invalid {
+			border-color: $color_error;
+		}
+		&.ng-valid {
+			//border-color: green;
+		}
+	}
+}
+
+.form__input {
+	@extend .form__inputshared;
+	& + & {
+		margin-top: 2px;
+	}
+}
+
+.form__button {
+	//@include appearance(none);
+	@extend .form__inputshared;
+	background-color: $color_warmth;
+	color: $color_white;
+	cursor: pointer;
+	&:hover {
+		background-color: lighten($color_warmth, 10%);
+	}
+	&:active {
+		background-color: darken($color_warmth, 5%);
+	}
+	&[disabled="disabled"] {
+		&:hover,
+		&:active {
+			background-color: $color_warmth;
+		}
+	}
+}
+
+.form__select {
+	@extend .form__inputshared;
+	//@include appearance(none);
+
+
+	&::-ms-expand {
+		//display: none;
+		color: $color_warmth;
+		border: none;
+		outline: 0;
+		background-color: transparent;
+	}
+}
+
+.form__option {
+
+}
+
+// Modifiers
+
+.form__select--hidden {
+	@include appearance(none);
+	appearance: none;
+	//position: absolute;
+	//top: 0;
+	height: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	border: 0;
+	top: -2px;
+	position: relative;
+	z-index: 0;
+	& + .form__input {
+
+	}
+}
+
+.form__option--dk {
+
+}
+
+.form__option--de {
+
+}

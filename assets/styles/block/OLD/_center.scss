@@ -1,0 +1,42 @@
+
+.center {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+}
+
+.center {
+	//box-sizing: border-box;
+	//-moz-box-sizing: border-box;
+	//-webkit-box-sizing: border-box;
+}
+
+// Modifiers
+
+.center--stretch {
+	width: 100%;
+	height: 100%;
+}
+
+.center--vertical {
+	-webkit-box-align: center;
+	-webkit-flex-align: center;
+	-ms-flex-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+}
+
+.center--horizontal {
+	-webkit-justify-content: center;
+	-moz-justify-content: center;
+	-ms-justify-content: center;
+	justify-content: center;
+}
+
+.center--column {
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+}
