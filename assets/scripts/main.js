@@ -100,9 +100,10 @@ window.requestAnimFrame = (function () {
     ctx.clearRect(0, 0, base.canvasWidth, base.canvasHeight);
     ctx.save();
     var i;
+    var entity;
     // Entities
     for (i=0;i<base.entities.length;i++) {
-      var entity = base.entities[i];
+      entity = base.entities[i];
       ctx.drawImage(base.eggImage, entity.x, entity.y, entity.width, entity.height);
       /*
       ctx.beginPath();
@@ -116,11 +117,35 @@ window.requestAnimFrame = (function () {
       var player = base.players[i];
       ctx.drawImage(base.playerImage, player.x, player.y, player.width, player.height);
       //base.log(player);
+      for (var ii=0;ii<base.entities.length;ii++) {
+        entity = base.entities[ii];
+        if (collisionDetect(player, entity)) {
+          base.entities.splice(ii, 1);
+        }
+      }
     }
     // Fps
     ctx.font='20px Georgia';
     ctx.fillText(base.fps,10,30);
   }
+/**---------------------------------------
+  Collision Detection
+---------------------------------------**/
+  var collisionDetect = function(c1, c2, type) {
+    type = (type === undefined) ? 'box' : type;
+    if (type === 'box') {
+      return (c1.x < c2.x + c2.width &&
+      c1.x + c1.width > c2.x &&
+      c1.y < c2.y + c2.height &&
+      c1.height + c1.y > c2.y);
+    }
+    else if (type === 'circle') {
+      var dx = c1.x - c2.x;
+      var dy = c1.y - c2.y;
+      var dist = c1.radius + c2.radius;
+      return (dx * dx + dy * dy <= dist * dist);
+    }
+  };
 /**---------------------------------------
   Resize
 ---------------------------------------**/
