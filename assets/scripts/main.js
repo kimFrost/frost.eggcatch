@@ -16,13 +16,13 @@ window.requestAnimFrame = (function () {
     options: {
       debug: true,
       useRoundNum: false,
-      gravity: 0.05,
+      gravity: 0.03,
       showCollisonModel: true,
       spawnTicksRequired: 50,
       playerWidth: 275,
       playerHeight: 141,
-      eggWidth: 50,
-      eggHeight: 80,
+      eggWidth: 55,
+      eggHeight: 76,
       playerColumns: 4,
       playerRows: 2
     },
@@ -38,7 +38,7 @@ window.requestAnimFrame = (function () {
     entities: [],
     players: [],
     playerImage: document.createElement('img'),
-    eggImage: document.createElement('img'),
+    eggImages: [],
     fpsCount: 0,
     fps: 0,
     logCount: 0,
@@ -63,7 +63,7 @@ window.requestAnimFrame = (function () {
       height: 0,
       radius: 0
     };
-    this.image = base.eggImage;
+    this.image = base.eggImages[Math.floor(Math.random() * base.eggImages.length)];
     return this;
   };
 /**---------------------------------------
@@ -90,6 +90,13 @@ window.requestAnimFrame = (function () {
       //send error to developer platform
     }
   };
+/**---------------------------------------
+  Utilities
+---------------------------------------**/
+  // Linear interpolation
+  function lerp(a, b, f) {
+    return a + f * (b - a);
+  }
 /**---------------------------------------
   Draw/Update
 ---------------------------------------**/
@@ -196,10 +203,11 @@ window.requestAnimFrame = (function () {
       // Entities stored in player slots
       for (ii = 0; ii < player.slots.length; ii++) {
         var slot = player.slots[ii];
+        ctx.fillRect(player.x + slot.x, player.y + slot.y, 5, 5);
         for (var iii = 0; iii < slot.entities.length; iii++) {
           entity = slot.entities[iii];
-
-          ctx.drawImage(entity.image, player.x + slot.ix * entity.width, player.y + slot.iy * entity.height, entity.width, entity.height);
+          //ctx.drawImage(entity.image, player.x + slot.x, player.y + slot.y, entity.width, entity.height);
+          ctx.drawImage(entity.image, player.x + slot.x - (entity.width / 2), player.y + slot.y - (entity.height / 2), entity.width, entity.height);
         }
       }
     }
@@ -341,7 +349,6 @@ window.requestAnimFrame = (function () {
     document.body.appendChild(canvas);
     base.canvas = canvas;
     base.canvasCtx = canvas.getContext('2d');
-    base.eggImage.src = 'egg.png';
     base.playerImage.src = 'bakke.png';
 
     // Create Paddle
@@ -357,15 +364,34 @@ window.requestAnimFrame = (function () {
     player.collision.height = 20;
 
     // Create player slot for eggs
+    var slotGridWidth;
     for (var i=0; i < base.options.playerColumns * base.options.playerRows; i++) {
+      var ix = i % base.options.playerColumns;
+      var iy = Math.floor(i / base.options.playerColumns);
+      if (iy === 0) {
+        slotGridWidth = player.width * 0.9;
+      }
+      else {
+        slotGridWidth = player.width * 0.97;
+      }
       player.slots.push({
-        ix: i % 4,
-        iy: Math.floor(i / 4),
+        x: ix * (slotGridWidth / base.options.playerColumns) + (slotGridWidth / base.options.playerColumns / 2) + ((player.width - slotGridWidth) / 2),
+        y: iy * player.height * 0.25 + 20,
         entities: []
       });
     }
-
     base.players.push(player);
+
+    // Create egg images
+    base.eggImages.push(document.createElement('img'));
+    base.eggImages.push(document.createElement('img'));
+    base.eggImages.push(document.createElement('img'));
+    base.eggImages.push(document.createElement('img'));
+
+    base.eggImages[0].src = 'images/egg--1.png';
+    base.eggImages[1].src = 'images/egg--2.png';
+    base.eggImages[2].src = 'images/egg--3.png';
+    base.eggImages[3].src = 'images/egg--4.png';
 
     // Update canvas size
     var parent = base.canvas.parentElement;
