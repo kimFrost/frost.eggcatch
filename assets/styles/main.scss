@@ -27,6 +27,15 @@ $spr-layout:smart;
 @import "global/_global_fonts";
 @import "global/_global_mixins";
 
+
+canvas {
+  cursor: none;
+}
+
+body {
+  overflow: hidden;
+}
+
 // Block
 //@import "block/_banner";
 //@import "block/_splash";
