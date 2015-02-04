@@ -17,14 +17,15 @@ window.requestAnimFrame = (function () {
       debug: true,
       useRoundNum: false,
       gravity: 0.03,
-      showCollisonModel: true,
+      showCollisonModel: false,
       spawnTicksRequired: 50,
       playerWidth: 275,
       playerHeight: 141,
       eggWidth: 55,
       eggHeight: 76,
       playerColumns: 4,
-      playerRows: 2
+      playerRows: 2,
+      lives: 3
     },
     scaleMultiplier: 1,
     gameTicks: 0,
@@ -38,6 +39,8 @@ window.requestAnimFrame = (function () {
     entities: [],
     players: [],
     playerImage: document.createElement('img'),
+    playerMidImage: document.createElement('img'),
+    playerFrontImage: document.createElement('img'),
     eggImages: [],
     fpsCount: 0,
     fps: 0,
@@ -55,6 +58,7 @@ window.requestAnimFrame = (function () {
     this.width = 0;
     this.height = 0;
     this.slots = [];
+    this.attachments = [];
     this.collision = {
       type: 'box',
       x: 0,
@@ -113,7 +117,7 @@ window.requestAnimFrame = (function () {
     if (base.spawnTicks > base.options.spawnTicksRequired) {
       var entity = new Entity();
       entity.x = Math.floor(Math.random() * (base.canvasWidth - 50));
-      entity.height = -(base.options.eggHeight * base.scaleMultiplier);
+      entity.y = -(base.options.eggHeight * base.scaleMultiplier);
       entity.width = base.options.eggWidth * base.scaleMultiplier;
       entity.height = base.options.eggHeight * base.scaleMultiplier;
       entity.collision.width = entity.width;
@@ -190,26 +194,49 @@ window.requestAnimFrame = (function () {
     ctx.save();
     var i;
     var ii;
+    var iii;
     var entity;
+    var slot;
 
     // Players
     for (i=0;i<base.players.length;i++) {
       var player = base.players[i];
+      // Draw player back image
       ctx.drawImage(base.playerImage, player.x, player.y, player.width, player.height);
       if (base.options.showCollisonModel) {
         ctx.fillStyle = 'rgba(150,0,0,0.3)';
         ctx.fillRect(player.x + player.collision.x, player.y + player.collision.y, player.collision.width, player.collision.height);
       }
       // Entities stored in player slots
+      // Draw back eggs
       for (ii = 0; ii < player.slots.length; ii++) {
-        var slot = player.slots[ii];
-        ctx.fillRect(player.x + slot.x, player.y + slot.y, 5, 5);
-        for (var iii = 0; iii < slot.entities.length; iii++) {
-          entity = slot.entities[iii];
-          //ctx.drawImage(entity.image, player.x + slot.x, player.y + slot.y, entity.width, entity.height);
-          ctx.drawImage(entity.image, player.x + slot.x - (entity.width / 2), player.y + slot.y - (entity.height / 2), entity.width, entity.height);
+        slot = player.slots[ii];
+        if (slot.iy === 0) {
+          //ctx.fillStyle = 'rgba(90,20,120,0.7)';
+          //ctx.fillRect(player.x + slot.x, player.y + slot.y, 5, 5);
+          for (iii = 0; iii < slot.entities.length; iii++) {
+            entity = slot.entities[iii];
+            ctx.drawImage(entity.image, player.x + slot.x - (entity.width / 2), player.y + slot.y - (entity.height / 2), entity.width, entity.height);
+          }
         }
       }
+      // Draw player mid image
+      ctx.drawImage(base.playerMidImage, player.x, player.y, player.width, player.height);
+      // Draw front eggs
+      for (ii = 0; ii < player.slots.length; ii++) {
+        slot = player.slots[ii];
+        if (slot.iy === 1) {
+          //ctx.fillStyle = 'rgba(90,20,120,0.7)';
+          //ctx.fillRect(player.x + slot.x, player.y + slot.y, 5, 5);
+          for (iii = 0; iii < slot.entities.length; iii++) {
+            entity = slot.entities[iii];
+            ctx.drawImage(entity.image, player.x + slot.x - (entity.width / 2), player.y + slot.y - (entity.height / 2), entity.width, entity.height);
+          }
+        }
+      }
+      // Draw player front image
+      ctx.drawImage(base.playerFrontImage, player.x, player.y, player.width, player.height);
+
     }
 
     // Entities
@@ -259,9 +286,11 @@ window.requestAnimFrame = (function () {
     recal();
   };
   var recal = function() {
+    base.log('recal');
     base.canvasWidth = base.canvas.width;
     base.canvasHeight = base.canvas.height;
     var widthRatio = base.canvasWidth / base.lastCanvasWidth;
+
     // Set Size Profile
     if (base.canvasWidth > 1050) {
       base.scaleMultiplier = 1;
@@ -272,17 +301,42 @@ window.requestAnimFrame = (function () {
     else {
       base.scaleMultiplier = 0.4;
     }
-    // Set player size and position
-    base.players[0].x = base.players[0].x * widthRatio;
-    base.players[0].y = base.canvasHeight - (200 * base.scaleMultiplier);
-    base.players[0].width = base.options.playerWidth * base.scaleMultiplier;
-    base.players[0].height = base.options.playerHeight * base.scaleMultiplier;
-    base.players[0].collision.y = 80 * base.scaleMultiplier;
-    base.players[0].collision.width = base.players[0].width;
-    base.players[0].collision.height = 20 * base.scaleMultiplier;
 
-    for (var i=0;i<base.entities.length;i++) {
-      var entity = base.entities[i];
+    // Set player size and position
+    var player = base.players[0];
+    player.x = player.x * widthRatio;
+    player.y = base.canvasHeight - (200 * base.scaleMultiplier);
+    player.width = base.options.playerWidth * base.scaleMultiplier;
+    player.height = base.options.playerHeight * base.scaleMultiplier;
+    player.collision.y = 80 * base.scaleMultiplier;
+    player.collision.width = player.width;
+    player.collision.height = 20 * base.scaleMultiplier;
+
+    var i;
+    var ii;
+    var entity;
+    var slotGridWidth;
+    for (i = 0; i < player.slots.length; i++) {
+      var slot = player.slots[i];
+      if (slot.iy === 0) {
+        slotGridWidth = player.width * 0.9;
+      }
+      else {
+        slotGridWidth = player.width * 0.97;
+      }
+      slot.x = slot.ix * (slotGridWidth / base.options.playerColumns) + (slotGridWidth / base.options.playerColumns / 2) + ((player.width - slotGridWidth) / 2);
+      slot.y = slot.iy * player.height * 0.20 + (player.height * 0.4);
+      base.log('slot' , slot);
+      for (ii = 0; ii < slot.entities.length; ii++) {
+        entity = slot.entities[ii];
+        entity.width = base.options.eggWidth * base.scaleMultiplier;
+        entity.height = base.options.eggHeight * base.scaleMultiplier;
+        base.log('entity' , entity);
+      }
+    }
+
+    for (i=0;i<base.entities.length;i++) {
+      entity = base.entities[i];
       entity.x = entity.x * widthRatio;
       entity.width = base.options.eggWidth * base.scaleMultiplier;
       entity.height = base.options.eggHeight * base.scaleMultiplier;
@@ -349,7 +403,9 @@ window.requestAnimFrame = (function () {
     document.body.appendChild(canvas);
     base.canvas = canvas;
     base.canvasCtx = canvas.getContext('2d');
-    base.playerImage.src = 'bakke.png';
+    base.playerImage.src = 'images/bakke.png';
+    base.playerFrontImage.src = 'images/bakke_front.png';
+    base.playerMidImage.src = 'images/bakke_mid.png';
 
     // Create Paddle
     var player = new Entity();
@@ -362,6 +418,8 @@ window.requestAnimFrame = (function () {
     player.collision.y = 80;
     player.collision.width = player.width;
     player.collision.height = 20;
+    player.attachments.push({});
+
 
     // Create player slot for eggs
     var slotGridWidth;
@@ -375,8 +433,10 @@ window.requestAnimFrame = (function () {
         slotGridWidth = player.width * 0.97;
       }
       player.slots.push({
+        ix: ix,
+        iy: iy,
         x: ix * (slotGridWidth / base.options.playerColumns) + (slotGridWidth / base.options.playerColumns / 2) + ((player.width - slotGridWidth) / 2),
-        y: iy * player.height * 0.25 + 20,
+        y: iy * player.height * 0.20 + (player.height * 0.4),
         entities: []
       });
     }
@@ -388,10 +448,10 @@ window.requestAnimFrame = (function () {
     base.eggImages.push(document.createElement('img'));
     base.eggImages.push(document.createElement('img'));
 
-    base.eggImages[0].src = 'images/egg--1.png';
-    base.eggImages[1].src = 'images/egg--2.png';
-    base.eggImages[2].src = 'images/egg--3.png';
-    base.eggImages[3].src = 'images/egg--4.png';
+    base.eggImages[0].src = 'images/egg-1.png';
+    base.eggImages[1].src = 'images/egg-2.png';
+    base.eggImages[2].src = 'images/egg-3.png';
+    base.eggImages[3].src = 'images/egg-4.png';
 
     // Update canvas size
     var parent = base.canvas.parentElement;
